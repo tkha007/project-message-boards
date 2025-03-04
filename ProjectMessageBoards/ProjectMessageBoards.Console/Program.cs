@@ -12,45 +12,55 @@ var serviceProvider = serviceCollection
     .RegisterApplicationServices()
     .BuildServiceProvider();
 
-
-var arguments = Console.ReadLine();
-
-if (!string.IsNullOrWhiteSpace(arguments))
+string? command;
+do
 {
-    var parts = arguments.Split(" ");
-    if (parts.Length == 1)
+    Console.Write("(type EXIT to quit) > ");
+    command = Console.ReadLine();
+    if (!string.IsNullOrWhiteSpace(command))
     {
-        // Project feed
-        var projectName = parts[0];
-        var service = serviceProvider.GetRequiredService<GetProjectFeed>();
-        ProjectFeed(service, projectName);
+        ProcessCommand(command, serviceProvider);
     }
-    else if (parts.Length == 2)
+} while (command is not null && !command.Equals("exit", StringComparison.OrdinalIgnoreCase));
+
+static void ProcessCommand(string arguments, IServiceProvider serviceProvider)
+{
+    if (!string.IsNullOrWhiteSpace(arguments))
     {
-        // User feed
-        var userName = parts[0];
-        var service = serviceProvider.GetRequiredService<GetUserFeed>();
-        UserFeed(service, userName);
-    }
-    else if (parts.Length == 3)
-    {
-        // Subscribe to project
-        var userName = parts[0];
-        var projectName = parts[2];
-        var service = serviceProvider.GetRequiredService<SubscribeToProject>();
-        SubscribeToProject(service, userName, projectName);
-    }
-    else
-    {
-        // Post to project
-        var userName = parts[0];
-        var projectName = parts[2];
-        var message = parts[3];
-        var service = serviceProvider.GetRequiredService<PostToProject>();
-        PostToProject(service, userName, projectName, message);
+        var parts = arguments.Split(" ");
+        if (parts.Length == 1)
+        {
+            // Project feed
+            var projectName = parts[0];
+            var service = serviceProvider.GetRequiredService<GetProjectFeed>();
+            ProjectFeed(service, projectName);
+        }
+        else if (parts.Length == 2)
+        {
+            // User feed
+            var userName = parts[0];
+            var service = serviceProvider.GetRequiredService<GetUserFeed>();
+            UserFeed(service, userName);
+        }
+        else if (parts.Length == 3)
+        {
+            // Subscribe to project
+            var userName = parts[0];
+            var projectName = parts[2];
+            var service = serviceProvider.GetRequiredService<SubscribeToProject>();
+            SubscribeToProject(service, userName, projectName);
+        }
+        else
+        {
+            // Post to project
+            var userName = parts[0];
+            var projectName = parts[2];
+            var message = parts[3];
+            var service = serviceProvider.GetRequiredService<PostToProject>();
+            PostToProject(service, userName, projectName, message);
+        }
     }
 }
-
 
 static void ProjectFeed(GetProjectFeed projectFeed, string projectName)
 {

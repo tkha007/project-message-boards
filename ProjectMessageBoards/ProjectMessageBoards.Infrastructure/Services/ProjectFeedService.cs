@@ -20,7 +20,13 @@ internal sealed class ProjectFeedService : IProjectFeedService
 
     public List<Message> GetAllMessagesForProject(Project project)
     {
-        return _projectFeed[project].OrderByDescending(x => x.PostDateUtc).ToList();
+        if (_projectFeed.ContainsKey(project))
+        {
+            return _projectFeed[project].OrderByDescending(x => x.PostDateUtc).ToList();
+        } else
+        {
+            return [];
+        }
     }
 
     public List<(Project, Message)> GetAllMessagesForProjects(List<Project> projects)
